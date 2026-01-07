@@ -1,5 +1,5 @@
 # 🐶🐱 Dogs vs Cats Classifier – Progetto AI
-Progetto per il corso di Laboratorio di ottimizzazione, intelligenza artificiale e machine learning, realizzato da Naman Bagga il 08/01/2026.
+##Progetto per il corso di Laboratorio di ottimizzazione, intelligenza artificiale e machine learning, realizzato da Naman Bagga il 08/01/2026.
 Un progetto completo per la classificazione di immagini di cani e gatti tramite reti neurali convoluzionali (CNN) e transfer learning con ResNet18.  
 Include addestramento, validazione, logging avanzato, resume training, predizione e confronto dei modelli.
 
