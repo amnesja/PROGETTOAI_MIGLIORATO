@@ -261,7 +261,3 @@ Le scelte progettuali hanno permesso di ottenere:
 - metriche dettagliate per l’analisi
 - confronto diretto tra modelli
 - riproducibilità totale degli esperimenti
-
-Il progetto ora è strutturato secondo le migliori pratiche di machine learning moderno.
-
----
