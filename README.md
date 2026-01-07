@@ -1,28 +1,59 @@
-# Dogs vs Cats Classifier 🐶🐱
+# 🐶🐱 Dogs vs Cats Classifier – Progetto AI
 
-Rete neurale CNN + ResNet18 per classificare immagini di cani e gatti.
+Un progetto completo per la classificazione di immagini di cani e gatti tramite reti neurali convoluzionali (CNN) e transfer learning con ResNet18.  
+Include addestramento, validazione, logging avanzato, resume training, predizione e confronto dei modelli.
 
-## Funzionalità
-- Modello SimpleCNN da zero
-- Modello ResNet18 (transfer learning)
-- Early stopping avanzato
-- Resume training
-- TensorBoard logging (loss, accuracy, confusion matrix)
-- Predizione singola da immagine
+---
 
-## Installazione
-pip install -r requirements.txt
+## 📌 Caratteristiche principali
 
-## Esecuzione
+### ✔️ Modelli implementati
+- **SimpleCNN** – rete neurale progettata da zero  
+- **ResNet18** – rete pre-addestrata tramite transfer learning
 
-### Training
-python main.py --mode train
+### ✔️ Funzionalità del sistema
+- Dataset loader con trasformazioni e normalizzazione
+- Early stopping avanzato (monitor accuracy/loss + target accuracy)
+- Resume training automatico dai checkpoint
+- Salvataggio automatico:
+  - Checkpoint per epoca
+  - `best_model.pth`
+- TensorBoard logging:
+  - Loss / Accuracy
+  - Confusion Matrix
+  - Architettura del modello
+  - Immagini del dataset
 
-### Valutazione
-python main.py --mode eval
+### ✔️ Modalità operative
+- `train` – Addestra il modello
+- `eval` – Valuta il modello migliore
+- `predict` – Predice classe di un'immagine singola
+- `resume` – Riprende il training dall’ultimo checkpoint
 
-### Predizione
-python main.py --mode predict
+---
 
-
-
+## 📂 Struttura del progetto
+`
+PROGETTOAI_MIGLIORATO/
+│
+├── config/                 # configurazioni e schema
+    ├──config.yaml
+    ├──schema.py
+├── models/                 # SimpleCNN + ResNet18
+    ├──simple_cnn.py
+    ├──resnet18.py
+├── utils/                  # dataloader, early stopping, resume
+    ├──dataloader.py
+    ├──early_stopping
+├── checkpoints/            # salvati automaticamente
+├── runs/                   # per TensorBoard
+├── scripts/                #script che vengono importati nel main
+    ├── train.py               # training completo
+    ├── evaluate.py            # valutazione sul validation/test
+    ├── predict.py             # predizione su singola immagine
+├── main.py                # entry point con modalità
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+`
