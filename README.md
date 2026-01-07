@@ -18,10 +18,10 @@ pip install -r requirements.txt
 ### Training
 python main.py --mode train
 
-###Valutazione
+### Valutazione
 python main.py --mode eval
 
-###Predizione
+### Predizione
 python main.py --mode predict
 
 
