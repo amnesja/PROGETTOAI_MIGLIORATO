@@ -1,0 +1,50 @@
+# ============================
+# CONFIGURAZIONE GENERALE
+# ============================
+
+project_name: "Dogs_vs_Cats"
+seed: 42
+
+# ============================
+# DATI
+# ============================
+
+data:
+  root_dir: "data"
+  image_size: 224
+  batch_size: 32
+  num_workers: 0
+
+# ============================
+# MODELLO
+# ============================
+
+model:
+  name: "resnet18"                          # Options: "simple_cnn", "resnet18" 
+  num_classes: 2
+  pretrained: true                        # Options: true -> per resnet18, false -> per simple_cnn
+
+# ============================
+# TRAINING
+# ============================
+
+training:
+  epochs: 30
+  learning_rate: 0.001
+
+# ============================
+# EARLY STOPPING
+# ============================
+
+early_stopping:
+  enabled: true
+  patience: 5
+  min_delta: 0.005
+  target_accuracy: 0.90
+  monitor: "accuracy" # Options: "loss", "accuracy"
+
+# ============================
+# RESUME TRAINING
+# ============================
+resume:
+  enabled: true
