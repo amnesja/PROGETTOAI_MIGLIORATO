@@ -33,7 +33,7 @@ Include addestramento, validazione, logging avanzato, resume training, predizion
 ---
 
 ## 📂 Struttura del progetto
-`
+```
 PROGETTOAI_MIGLIORATO/
 │
 ├── config/                 # configurazioni e schema
@@ -56,4 +56,4 @@ PROGETTOAI_MIGLIORATO/
 ├── requirements.txt
 ├── README.md
 └── .gitignore
-`
+```
