@@ -1,0 +1,24 @@
+# Dataset
+data/
+data/*
+
+# Checkpoints dei modelli
+checkpoints/
+checkpoints/*
+
+# TensorBoard logs
+runs/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Envs
+.env
+.venv
+venv/
+ENV/
+
+# Config locale
+*.pth
+*.pt
