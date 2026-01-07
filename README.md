@@ -48,12 +48,22 @@ PROGETTOAI_MIGLIORATO/
 ├── checkpoints/            # salvati automaticamente
 ├── runs/                   # per TensorBoard
 ├── scripts/                #script che vengono importati nel main
-    ├── train.py               # training completo
-    ├── evaluate.py            # valutazione sul validation/test
-    ├── predict.py             # predizione su singola immagine
-├── main.py                # entry point con modalità
+    ├── train.py            # training completo
+    ├── evaluate.py         # valutazione sul validation/test
+    ├── predict.py          # predizione su singola immagine
+├── main.py                 # entry point con modalità
 │
-├── requirements.txt
+├── requirements.txt        # file librerie utilizzate
 ├── README.md
 └── .gitignore
+```
+
+---
+
+## ⚙️ Installazione
+
+Assicurati di avere Python 3.9+ installato.
+
+```bash
+pip install -r requirements.txtù
 ```
