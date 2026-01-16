@@ -39,6 +39,7 @@ def evaluate():
     # ==================================
     # COSTRUISCI PERCORSO CHECKPOINT
     # ==================================
+    """
     checkpoint_dir = os.path.join("checkpoints", config.model.name)
     best_model_path = os.path.join(checkpoint_dir, "best_model.pth")
 
@@ -47,6 +48,17 @@ def evaluate():
 
     print(f"Caricamento pesi da: {best_model_path}")
 
+    model.load_state_dict(torch.load(best_model_path, map_location=device))
+    model.eval()
+    """
+    experiment_name = config.experiment.name
+    checkpoint_dir = os.path.join("experiments", experiment_name, "checkpoints")
+    best_model_path = os.path.join(checkpoint_dir, "best_model.pth")
+    
+    if not os.path.exists(best_model_path):
+        raise FileNotFoundError(f"Checkpoint non trovato: {best_model_path}")
+    
+    print(f"Caricamento pesi da: {best_model_path}")
     model.load_state_dict(torch.load(best_model_path, map_location=device))
     model.eval()
 

@@ -26,6 +26,7 @@ def load_model(config, device):
         raise ValueError(f"Modello non supportato: {config.model.name}")
     
     # Percorso dinamico del checkpoint
+    """
     checkpoint_dir = os.path.join("checkpoints", config.model.name)
     best_model_path = os.path.join(checkpoint_dir, "best_model.pth")
 
@@ -38,7 +39,18 @@ def load_model(config, device):
     model.eval()
     
     return model
+    """
+    experiment_name = config.experiment.name
+    checkpoint_dir = os.path.join("experiments", experiment_name, "checkpoints")
+    best_model_path = os.path.join(checkpoint_dir, "best_model.pth")
 
+    if not os.path.exists(best_model_path):
+        raise FileNotFoundError(f"Checkpoint non trovato: {best_model_path}")
+    
+    print(f"Caricamento pesi da: {best_model_path}")
+    model.load_state_dict(torch.load(best_model_path, map_location=device))
+    model.eval()
+    return model
 
 def preprocess_image(image_path, config):
     """Preprocessa l'immagine per la predizione."""

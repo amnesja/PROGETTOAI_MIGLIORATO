@@ -20,7 +20,7 @@ from utils.dataloader import get_dataloaders
 from utils.early_stopping import EarlyStopping
 from models.simple_cnn import SimpleCNN
 from models.resnet18 import get_resnet18
-
+from utils.seed import set_seed
 
 def validate(model, dataloader, criterion, device):
     """
@@ -89,11 +89,29 @@ def train(resume=False):
     with open("config/config.yaml") as f:
         config = Config(**yaml.safe_load(f))
     
+    # =================================
+    # CREAZIONE CARTELLA ESPERIMENTO
+    # ==================================
+    experiment_name = config.experiment.name
+    experiment_dir = os.path.join("experiments", experiment_name)
+    os.makedirs(experiment_dir, exist_ok=True)
+
+    # Salva la configurazione usata nell'esperimento
+    with open(os.path.join(experiment_dir, "config_used.yaml"), "w") as f:
+        yaml.dump(config.dict(), f)
+    
+    # ==================================
+    # IMPOSTAZIONE SEED
+    # ==================================
+    
+    set_seed(config.seed)
+    
     # ==================================
     # TENSORBOARD WRITER
-    # =================================
+    # ==================================
     
-    writer = SummaryWriter(log_dir=f"runs/{config.model.name}")
+    #writer = SummaryWriter(log_dir=f"runs/{config.model.name}")                        #vecchio modo di salvare i log
+    writer = SummaryWriter(log_dir=os.path.join(experiment_dir, "tensorboard"))         # I log verranno salvati in experiments/<experiment_name>/tensorboard
 
     # ==================================
     # IMPOSTAZIONI DISPOSITIVO
@@ -152,16 +170,18 @@ def train(resume=False):
     optimizer = Adam.Adam(model.parameters(), lr=config.training.learning_rate)
 
     # =================================
-    # RESUME TRAINING
+    # RESUME TRAINING (Cartella esperimento)
     # =================================
     
     start_epoch = 0
-    checkpoint_dir = os.path.join("checkpoints", config.model.name)
+    checkpoint_dir = os.path.join(experiment_dir, "checkpoints")
+    os.makedirs(checkpoint_dir, exist_ok=True)
 
     if config.resume.enabled:
-
+        """
         # Controlla se la cartella dei checkpoint esiste
         if os.path.isdir(checkpoint_dir):
+
             # Prendi tutti i file di checkpoint
             checkpoint_files = [f for f in os.listdir(checkpoint_dir)
                                     if f.startswith("checkpoint_epoch_") and f.endswith(".pth")
@@ -187,6 +207,37 @@ def train(resume=False):
             print("Nessuna cartella di checkpoint trovata, inizio nuovo training")
     else:
         print("Resume disabilitato, inizio nuovo training")
+        """
+
+        print(f"[RESUME] Ripristino del training. Controllo la cartella: {checkpoint_dir}")
+
+        # Controllo se la cartella dei checkpoint contiene i file
+        checkpoint_files = [
+            f for f in os.listdir(checkpoint_dir)
+            if f.startswith("checkpoint_epoch_") and f.endswith(".pth")
+        ]
+
+        if len(checkpoint_files) > 0:
+            
+            #Ordinamento per numero di epoch
+            checkpoint_files.sort(
+                key=lambda x: int(x.split("_")[-1].split(".")[0])
+            )
+            
+            latest_checkpoint = checkpoint_files[-1]
+            checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
+            print(f"[RESUME] Ripristino dal checkpoint: {checkpoint_path}")
+
+            checkpoint = torch.load(checkpoint_path, map_location=device)
+            model.load_state_dict(checkpoint["model_state_dict"])
+            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+            start_epoch = checkpoint["epoch"]
+            print(f"[RESUME] Ripresa dell'allenamento dalla epoch {start_epoch}")
+        else:
+            print(f"[RESUME] Nessun checkpoint trovato in {checkpoint_dir}, inizio nuovo training")
+    else:
+        print("[RESUME] Resume disabilitato, inizio nuovo training")
+
 
     # ==================================
     # EARLY STOPPING
@@ -267,9 +318,9 @@ def train(resume=False):
         writer.add_scalar("Accuracy/Validation", val_acc, epoch+1)
 
         # =================================
-        # SALVATAGGIO CHECKPOINT IN BASE AL MODELLO
+        # SALVATAGGIO CHECKPOINT IN BASE AL MODELLO (nell esperimento)
         # =================================
-        
+        """
         checkpoint_dir = os.path.join("checkpoints", config.model.name)
         os.makedirs(checkpoint_dir, exist_ok=True)
 
@@ -279,7 +330,16 @@ def train(resume=False):
             "model_state_dict": model.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
         }, checkpoint_path)
-    
+        """
+        checkpoint_path = os.path.join(
+            experiment_dir,"checkpoints",f"checkpoint_epoch_{epoch+1}.pth"
+        )
+        torch.save({
+            "epoch": epoch + 1,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+        }, checkpoint_path)
+
         # =================================
         # EARLY STOPPING
         # =================================
@@ -287,14 +347,37 @@ def train(resume=False):
         early_stopping.step(val_loss,val_acc)
 
         if early_stopping.is_best:
+            """
             best_model_path = os.path.join(checkpoint_dir, "best_model.pth")
             torch.save(model.state_dict(), best_model_path)
             print(f"Modello salvato come: {best_model_path}")
-
+            """
+            best_model_path = os.path.join(
+                experiment_dir,"checkpoints","best_model.pth"
+            )
+            torch.save(model.state_dict(), best_model_path)
+            print(f"Modello salvato come: {best_model_path}")
             
         if early_stopping.early_stop:
             print("Early stopping attivato. Interruzione dell'allenamento.")
             break
+
+        # =================================
+        # SALVATAGGIO RISULTATI ESPERIMENTO (RESULTS.JSON)
+        # =================================
+        results = {
+            "best_val_score": early_stopping.best_score,
+            "stopped_at_epoch": epoch + 1,
+            "final_val_loss": val_loss,
+            "final_val_accuracy": val_acc
+        }
+        import json
+
+        with open(os.path.join(experiment_dir, "results.json"), "w") as f:
+            json.dump(results, f, indent=4)
+        
+        print(f"Risultati salvati in: {experiment_dir}/results.json")
+    
     writer.close()
 
 

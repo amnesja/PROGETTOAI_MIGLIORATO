@@ -1,0 +1,6 @@
+{
+    "best_val_score": 0.7157842157842158,
+    "stopped_at_epoch": 12,
+    "final_val_loss": 21.358199868883407,
+    "final_val_accuracy": 0.7117882117882118
+}

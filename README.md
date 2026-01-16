@@ -39,15 +39,19 @@ PROGETTOAI_MIGLIORATO/
 ├── config/                 # configurazioni e schema
     ├──config.yaml
     ├──schema.py
+├── experiments/            # cartella esperimenti
+    ├── ..../
+        ├──checkpoints/    # cartella checkpoint 
+        ├──tensorboard/    # logdir per eseguire tensorboard
+├── image/                  # immagini esperimenti per report
 ├── models/                 # SimpleCNN + ResNet18
     ├──simple_cnn.py
     ├──resnet18.py
-├── utils/                  # dataloader, early stopping, resume
+├── utils/                  # dataloader, early stopping, seed
     ├──dataloader.py
     ├──early_stopping
-├── checkpoints/            # salvati automaticamente
-├── runs/                   # per TensorBoard
-├── scripts/                #script che vengono importati nel main
+    ├──seed.py              
+├── scripts/                # script che vengono importati nel main
     ├── train.py            # training completo
     ├── evaluate.py         # valutazione sul validation/test
     ├── predict.py          # predizione su singola immagine
@@ -249,6 +253,133 @@ TensorBoard è stato integrato per monitorare:
 - Facilita la comprensione degli errori.
 - Mostra differenze chiare tra SimpleCNN e ResNet18.
 
+---
+
+## 📈 Analisi dei risultati degli esperimenti (SimpleCNN vs ResNet18)
+
+Questa sezione riassume l'analisi dei grafici ottenuti con TensorBoard, confrontando gli esperimenti su:
+- learning rate
+- batch size
+- epoche
+
+### Learing Rate: ResNet18 (pretrained, con pesi di ImageNet)
+### ✅ Accuracy in Validazione
+- LR = 0.0001 [magenta]: molto alta e stabile, il migliore dei tre
+
+- LR = 0.001 [grigio]: discreta ma comunque con valori accettabili
+
+- LR = 0.01 [azzurro]: bassa (0.50 -> 0.75 dopo molte epoche), probabilmente il modello impara con molta difficolta a causa del LR troppo alto
+
+![TensorBoard R_Accuracy screenshot](image/LR/Resnet_accuracy.png)
+
+### 🔥 Loss in training
+- LR = 0.0001 [magenta]: molto bassa e stabile, buona convergenza (diminuisce in modo coerente e si stabilizza su un valore basso non presentando grandi oscillazioni)
+
+- LR = 0.001 [grigio]: situazione intermedia, la convergenza è abbastanza pulita nonostante ci siano delle oscillazioni (parte alta ma piano piano diminuisce, il modello impara ma non in modo stabile)
+
+- LR = 0.01 [azzurro]: inizialmente molto alta, scende molto lentamente ed è fortemente instabile
+
+![TensorBoard R_Train loss screenshot](image/LR/Resnet_Train_loss.png)
+
+### ⚠️ Loss in validazione
+- LR = 0.0001 [magenta]: valori bassi, nessuna grossa oscillazione e andamento regolare
+
+- LR = 0.001 [grigio]: valore più alto, oscilla molto e non mostra un miglioramento netto
+
+- LR = 0.01 [azzurro]: valori altissimi, peggiora nelle ultime epoche e perde il controllo
+
+![TensorBoard R_Val loss screenshot](image/LR/Resnet_Val_loss.png)
+
+in sintesi:
+- 0.0001 -> il modello impara bene e generalizza bene
+- 0.001 -> il modello impara ma non in modo ottimale
+- 0.01 -> il modello non impara
+
+### Learning Rate: SimpleCNN (modello da zero)
+### ✅ Accuracy in Validazione
+
+- LR = 0.0001 [grigio]: sale gradualmente, è stabile ed è il miglior LR perchè impara lentamente ma in modo pulito
+
+- LR = 0.001 [arancione]: sale in modo instabile e poi non migliora più
+
+- LR = 0.01 [verde]: rimane piatta, a quanto pare il modello indovina in modo random e di conseguenza non sta imparando nulla
+
+![TensorBoard S_Accuracy screenshot](image/LR/SimpleCNN_Accuracy.png)
+
+### 🔥 Loss in training
+
+- LR = 0.0001 [grigio]: scende molto lentamente ma in modo pulito
+
+- LR = 0.001 [arancione]: scende molto rapidamente ma non sta seguendo il trend (la linea arancione più scura)
+
+- LR = 0.01 [verde]: inizialmente altissima, scende pochissimo ma rimane comunque enorme
+
+![TensorBoard S_Train loss screenshot](image/LR/SimpleCNN_Train_loss.png)
+
+### ⚠️ Loss in validazione
+- LR = 0.0001 [grigio]: scende inizialmente ma poi risale in modo lento, è la curva meno instabile e strana
+
+- LR = 0.001 [arancione]: sale in modo molto velocemente, probabilmente non sarebbe in grado di dare previsioni su nuovi dati accurati perchè fallisce sul set di validazione
+
+- LR = 0.01 [verde]: nessuna capacità di apprendimento, è piatta
+
+![TensorBoard S_Val loss screenshot](image/LR/SimpleCNN_Val_loss.png)
+
+in sintesi:
+- 0.0001 -> il modello impara in modo sano ma lento
+- 0.001 -> il modello imparara ma nella pratica darebbe problemi
+- 0.01 -> il modello non impara
+
+### Batch size: ResNet18 (con il miglior learning rate e con i pesi di ImageNet)
+
+### ✅ Accuracy in Validazione
+- BS = 16 [giallo]: andamento irregolare e calo nelle prime epoche (performance peggiori)
+- BS = 64 [viola]: abbastanza stabile, non ha troppe oscillazioni, probabilmente il migliore
+- BS = 128 [azzurro]: partenza ottima ma leggermente sotto al viola e presenta più oscillazioni
+
+![TensorBoard R_Accuracy screenshot](image/BS/Resnet_Accuracy.png)
+
+### 🔥 Loss in training
+- BS = 16 [giallo]: converge più rapidamente a causa di overfitting
+- BS = 64 [viola]: converge abbastanza rapidamente ma ha un comportameno stabile con un andamento pulito e regolare
+- BS = 128 [azzurro]: converge più letamente, il modello non impara abbastanza dal training e quindi non migliora in validazione
+
+![TensorBoard R_Train loss screenshot](image/BS/Resnet_Train_loss.png)
+
+### ⚠️ Loss in validazione
+- BS = 16 [giallo]: bassa e stabile, nessuna oscillazione importante
+- BS = 64 [viola]: andamento accettabile senza troppe oscillazioni
+- BS = 128 [azzurro]: andamento oscillante, inizia abbastanza stabile per poi scendere e risalire
+
+![TensorBoard R_Val loss screenshot](image/BS/Resnet_Val_loss.png)
+
+### Batch size: SimpleCNN (con il miglior learning rate)
+
+### ✅ Accuracy in Validazione
+- BS = 16 [magenta]: sale rapidamente già dalle prime epoche, ha oscillazioni ma non drammatiche
+- BS = 64 [giallo]: va bene ma ha più oscillazioni
+- BS = 128 [viola]: stabile ma più basso
+
+![TensorBoard R_Accuracy screenshot](image/BS/SimpleCNN_Accuracy.png)
+
+### 🔥 Loss in training
+- BS = 16 [magenta]: molto bassa, scende rapidamente
+- BS = 64 [giallo]: parte alta, più lenta 
+- BS = 128 [viola]: parte altissima, scende lentamente e resa comunque elevata dopo un tot di epoche
+
+
+![TensorBoard R_Train loss screenshot](image/BS/SimpleCNN_Train_loss.png)
+
+### ⚠️ Loss in validazione
+- BS = 16 [magenta]: stabile, nessun segnale di overfitting
+- BS = 64 [giallo]: più alta, oscilla un po'
+- BS = 128 [viola]: altissima, scende ma rimane comunque altissima
+
+![TensorBoard R_Val loss screenshot](image/BS/SimpleCNN_Val_loss.png)
+In sintesi:
+- BS = 16 -> è la migliore, equilibrata, migliore accuratezza e generalizzazione ottima
+- BS = 64 -> apprende ma lentamente, ha una loss di validazione alta
+- BS = 128 -> la loss rimane troppo alta e il learning rate è troppo basso per un batch di queste dimensioni
 ---
 
 ## ✔️ Conclusione

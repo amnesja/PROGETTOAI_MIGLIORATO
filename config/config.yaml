@@ -12,7 +12,7 @@ seed: 42
 data:
   root_dir: "data"
   image_size: 224
-  batch_size: 32
+  batch_size: 128                  
   num_workers: 0
 
 # ============================
@@ -20,9 +20,9 @@ data:
 # ============================
 
 model:
-  name: "resnet18"                          # Options: "simple_cnn", "resnet18" 
+  name: "simple_cnn"                                                    # Options: "simple_cnn", "resnet18" 
   num_classes: 2
-  pretrained: true                        # Options: true -> per resnet18, false -> per simple_cnn
+  pretrained: false                                                   # Options: [ESEMPIO] true -> per resnet18, false -> per simple_cnn
 
 # ============================
 # TRAINING
@@ -30,7 +30,7 @@ model:
 
 training:
   epochs: 30
-  learning_rate: 0.001
+  learning_rate: 0.0001
 
 # ============================
 # EARLY STOPPING
@@ -41,10 +41,16 @@ early_stopping:
   patience: 5
   min_delta: 0.005
   target_accuracy: 0.90
-  monitor: "accuracy" # Options: "loss", "accuracy"
+  monitor: "accuracy"                                                 # Options: "loss", "accuracy"
 
 # ============================
 # RESUME TRAINING
 # ============================
 resume:
   enabled: true
+
+# ============================
+# EXPERIMENTS
+# ============================
+experiment:
+  name: "EXP_GROUP[B]_simple_cnn_lr00001_bs128"                # Nome dell'esperimento

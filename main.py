@@ -1,7 +1,7 @@
 import argparse
-from scripts import train
-from scripts import evaluate
-from scripts import predict
+from scripts.train import train
+from scripts.evaluate import evaluate
+from scripts.predict import predict
 
 def main():
     parser = argparse.ArgumentParser()

@@ -13,7 +13,7 @@ class dataConfig(BaseModel):
     """Contiene tutti i parametri relativi al dataset."""
 
     root_dir: str                             # Percorso della cartella data/
-    image_size: int                             # Dimnesione immagini
+    image_size: int                           # Dimnesione immagini
     batch_size: int                           # Numero di immagini per batch
     num_workers: int                          # Numero di processi per il caricamento dei dati
 
@@ -60,6 +60,14 @@ class resumeConfig(BaseModel):
     enabled: bool                                           # Abilita o disabilita il resume dell'allenamento
 
 # ===================================
+# SEZIONE ESPERIMENTI
+# ===================================
+class experimentConfig(BaseModel):
+    """Contiene i parametri relativi agli esperimenti."""
+
+    name: str                                                # Nome dell'esperimento
+
+# ===================================
 # CONFIGURAZIONE PRINCIPALE
 # ===================================
 
@@ -72,5 +80,6 @@ class Config(BaseModel):
     model: modelConfig                                       # Configurazione del modello
     training: trainingconfig                                 # Configurazione dell'allenamento
     early_stopping: earlystoppingConfig                      # Configurazione dell'early stopping
-    resume: resumeConfig                                    # Configurazione del resume dell'allenamento 
+    resume: resumeConfig                                     # Configurazione del resume dell'allenamento 
+    experiment: experimentConfig                            # Configurazione degli esperimenti
 
