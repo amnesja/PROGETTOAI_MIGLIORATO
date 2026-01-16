@@ -270,7 +270,7 @@ Questa sezione riassume l'analisi dei grafici ottenuti con TensorBoard, confront
 
 - LR = 0.01 [azzurro]: bassa (0.50 -> 0.75 dopo molte epoche), probabilmente il modello impara con molta difficolta a causa del LR troppo alto
 
-![TensorBoard R_Accuracy screenshot](image/LR/Resnet_accuracy.png)
+![TensorBoard R_Accuracy screenshot](image/LR/Resnet_Accuracy.png)
 
 ### 🔥 Loss in training
 - LR = 0.0001 [magenta]: molto bassa e stabile, buona convergenza (diminuisce in modo coerente e si stabilizza su un valore basso non presentando grandi oscillazioni)
