@@ -97,7 +97,7 @@ Inserisci il percorso dell'immagine per la predizione:    (es. data/test/cats/ca
 ```
 ### TensorBoard
 ```bash
-tensorboard --logdir runs
+tensorboard --logdir experiments
 ```
 Apri il link nel browser e troverai:
 - Loss (train/validation)
