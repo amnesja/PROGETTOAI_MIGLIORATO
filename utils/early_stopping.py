@@ -19,6 +19,13 @@ class EarlyStopping:
         self.min_delta = min_delta
         self.target_accuracy = target_accuracy
         self.monitor = monitor
+    
+        """
+            best_score: tiene traccia della migliore metrica osservata finora.
+            counter: conta quante epoche consecutive non hanno mostrato miglioramento.
+            early_stop: flag che indica se l'allenamento deve essere fermato.
+            is_best: flag che indica se l'ultima metrica è la migliore finora.
+        """
 
         self.best_score = None
         self.counter = 0

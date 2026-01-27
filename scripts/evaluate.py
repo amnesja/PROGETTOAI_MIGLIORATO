@@ -13,11 +13,15 @@ def evaluate():
     with open("config/config.yaml") as f:
         config = Config(**yaml.safe_load(f))
 
+    # ==================================
+    # DEVICE
+    # ==================================
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
     # ==================================
-    # DATALOADER VALIDAZIONE
+    # DATALOADER VALIDAZIONE (uso solo il dataloader di validazione)
     # ==================================
     _, val_loader = get_dataloaders(config)
 

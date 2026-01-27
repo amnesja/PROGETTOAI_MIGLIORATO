@@ -19,7 +19,18 @@ class SimpleCNN(nn.Module):
         # ==================================
         # STRATO CONVOLUZIONALE 1
         # ==================================
-
+        """ 
+        Prima convoluzione:
+        - Input: immagini RGB (3 canali)
+        - Output: 16 canali di feature
+        - Kernel size: 3x3
+        - Padding: 1 (per mantenere le dimensioni spaziali)
+        In questa convoluzione, il modello impara 16 filtri diversi per estrarre caratteristiche dalle immagini di input.
+        Il kernel size di 3x3 è una scelta comune che permette di catturare dettagli locali nelle immagini.
+        Il paddinf di 1 assicura che l'altezza e la larghezza delle feature map rimangano invariate dopo la convoluzione.
+        Poi applico un'operazione di max pooling 2x2 per ridurre la dimensione spaziale delle feature map, dimezzando altezza e larghezza.
+        Faccio questi per ridurre il numero di parametri nel layer successivo e per rendere il modello più robusto alle traslazioni nelle immagini.
+        """
         # Conv2d: 3 input channels (RGB), 16 output channels, kernel size 3x3, padding 1
         self.conv1 = nn.Conv2d(
             in_channels=3,
@@ -34,7 +45,15 @@ class SimpleCNN(nn.Module):
         # ==================================
         # STRATO CONVOLUZIONALE 2
         # ==================================
-
+        """
+        Seconda convoluzione:
+        - Input: 16 canali di feature dalla prima convoluzione
+        - Output: 32 canali di feature
+        - Kernel size: 3x3
+        - Padding: 1
+        In questa convoluzione, il modello impara 32 filtri diversi per estrarre caratteristiche più complesse dalle feature map prodotte dalla prima convoluzione.
+        Anche qui, il kernel size di 3x3 e il padding di 1 sono scelte comuni per mantenere le dimensioni spaziali e catturare dettagli locali.
+        """
         # Seconda convoluzione: 16 input channels, 32 output channels, kernel size 3x3, padding 1
         self.conv2 = nn.Conv2d(
             in_channels=16,
@@ -46,7 +65,7 @@ class SimpleCNN(nn.Module):
         # ==================================
         # STRATO FULLY CONNECTED
         # ==================================
-
+    
         # Dopo due pooling: dimensione immagine 224 -> 112 -> 56, dimensione finale: 32*56*56
         self.fc1 = nn.Linear(
             in_features=32*56*56,

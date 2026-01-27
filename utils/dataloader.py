@@ -26,6 +26,19 @@ def get_dataloaders(config):
     # TRASFORMAZIONI IMMAGINI
     # ==================================
 
+    """
+    Definisco le trasformazioni da applicare alle immagini.
+    Queste includono il ridimensionamento, la conversione in tensore (ovvero un array multidimensionale utilizzato da PyTorch)
+    e la normalizzazione (ovvero la standardizzazione dei valori dei pixel).
+    1. Resize: ridimensiona tutte le immagini a una dimensione uniforme (config.data.image_size x config.data.image_size).
+    2. ToTensor: converte le immagini in tensori PyTorch.
+        Cambio la rappresentazione dei pixel da [0, 255] a [0.0, 1.0].
+    3. Normalize: normalizza i valori dei pixel utilizzando la media e la deviazione standard di ImageNet.
+    Questo aiuta il modello a convergere più velocemente durante l'allenamento.
+    Normalizzo con i valori di ImageNet perché se uso un modello pre-addestrato (pretrained=True),
+    il modello si aspetta input normalizzati in questo modo.
+    """
+
     train_transforms = transforms.Compose([
         transforms.Resize((config.data.image_size, config.data.image_size)),            # Resize -> dimensione uniforme
         transforms.ToTensor(),                                                          # Converti in tensore
@@ -41,6 +54,32 @@ def get_dataloaders(config):
     # ==================================
     # DATASET
     # ==================================
+
+    """
+    utilizzo ImageFolder perché la struttura delle cartelle è:
+    data/
+        train/
+            class1/
+                img1.jpg
+                img2.jpg
+                ...
+            class2/
+                img3.jpg
+                img4.jpg
+                ...
+        val/
+            class1/
+                img5.jpg
+                img6.jpg
+                ...
+            class2/
+                img7.jpg
+                img8.jpg
+                ...
+
+    ImageFolder organizza automaticamente le immagini in base alle cartelle delle classi.
+    Eseguo le trasformazioni definite sopra durante il caricamento delle immagini.
+    """
 
     # Dataset di allenamento (training)
     train_dataset = datasets.ImageFolder(

@@ -6,8 +6,10 @@ import torch
 
 def set_seed(seed: int):
     """
-    Imposta il seed per ottenere risultati riproducibili.
+    Imposta il seed (serve per fissare un generatore di numeri casuali) per ottenere risultati riproducibili.
     Agisce su: random, numpy, torch CPU e torch CUDA.
+    Praticamente se cambio solo un parametro (es. learning rate), posso essere sicuro che la variazione nei risultati
+    sia dovuta solo a quel cambiamento.
     """
     random.seed(seed)
     np.random.seed(seed)
